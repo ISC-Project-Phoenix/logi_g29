@@ -1,0 +1,77 @@
+#ROS package you are documenting
+package_name = "Logi_g29"
+repo = "https://github.com/ISC-Project-Phoenix/logi_g29"
+
+#You can have multiple nodes in one package
+[[nodes]]
+node_name = 'Logi_g29'
+#Relitive to this file
+source_file = ['./src/logi_g29.cpp']
+summary = '''
+Logitech g29 force feedback wheel device driver.
+
+This node fills the role of both a joy driver and something like joy_telop_twist.
+'''
+# (optional)
+potential_improvements = '''This node is generic across projects via libackermann, although currently it only has
+support for pheonix. To use in another project, first add the steering ratio to libackermann, then add a parameter for project to this node.
+'''
+# (optional)
+misc = '''This node does not directly pass the wheel angle as a joystick angle, but rather first passes the steering angle
+through a steering ratio to emulate a steering rack. This yields a virtual ackermann wheel angle for an ackermann message
+, which is then converted into a twist message.
+'''
+
+#Your published topics (optional)
+[[nodes.publishes]]
+name = '/ack_vel'
+description = 'AckermannDrive output from the wheel. Speed will be set to brake speed if brake is pressed, else throttle if throttle is pressed, it cannot ever be both'
+
+[[nodes.publishes]]
+name = '/cmd_vel'
+description = 'Twist ouput from the wheel. Same caviats as /ack_vel'
+
+#Your subscribed topics (optional)
+[[nodes.subscribes]]
+name = '/joy'
+description = 'Raw joy messages from the wheel. This should come from joy_node (included in this packages launch file)'
+
+#Your node parameters (optional)
+[[nodes.params]]
+name = 'max_throttle_speed'
+description = 'Velocity in m/s output when throttle is fully pressed.'
+
+[[nodes.params]]
+name = 'max_brake_speed'
+description = 'Velocity in m/s output when brake is fully pressed. Should be negitive.'
+
+[[nodes.params]]
+name = 'max_steering_rad'
+description = '''Maximum steering wheel angle in radians the node will accept.
+Steering over this value will output this value. Assumed to be symmetric.
+'''
+
+[[nodes.params]]
+name = 'wheelbase'
+description = '''Wheelbase of the vehicle in meters.'''
+
+#Your launchfile info (optional)
+[nodes.launch]
+file_path = './launch/logi_g29.launch.py'
+usage = 'Launches both logi_g29 and joy_node configured properly.'
+
+[[nodes.launch.args]]
+name = 'max_braking_speed'
+description = 'Same as node'
+
+[[nodes.launch.args]]
+name = 'max_throttle_speed'
+description = 'Same as node'
+
+[[nodes.launch.args]]
+name = 'max_steering_rad'
+description = 'Same as node'
+
+[[nodes.launch.args]]
+name = 'wheelbase'
+description = 'Same as node'

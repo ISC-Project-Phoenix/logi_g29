@@ -27,13 +27,15 @@ def generate_launch_description():
     joy = Node(package='joy',
                executable='joy_node',
                parameters=[{
-                   'deadzone': 0.0
+                   'deadzone': 0.0,
+                   'use_sim_time': use_sim_time
                }]
                )
 
     logi_g29 = Node(package='logi_g29',
                     executable='logi-g29',
                     parameters=[{
+                        'use_sim_time': use_sim_time,
                         'max_braking_speed': max_braking_speed,
                         'max_throttle_speed': max_throttle_speed,
                         'max_steering_rad': max_steering_rad,
@@ -46,7 +48,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         # Launch Arguments
-        DeclareLaunchArgument('use_rviz',
+        DeclareLaunchArgument('use_sim_time',
                               default_value='false',
                               description='Use simulation time if true'),
 
