@@ -14,7 +14,6 @@ def generate_launch_description():
     # launch arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # TODO make these accurate
     max_braking_speed = LaunchConfiguration(
         'max_braking_speed', default='-10.0')
     max_throttle_speed = LaunchConfiguration(
@@ -39,8 +38,11 @@ def generate_launch_description():
                         'max_throttle_speed': max_throttle_speed,
                         'max_steering_rad': max_steering_rad,
                         'wheelbase': wheelbase
-                    }]
-                    ) #TODO remap accroding to design docs for each kind of run type
+                    }],
+                    remappings=[
+                        ('/ack_vel', '/logi/ack_vel'),
+                    ],
+                    )  # TODO change other launch files to all have the same wheel max angle, add to main launch file
 
     return LaunchDescription([
         # Launch Arguments
