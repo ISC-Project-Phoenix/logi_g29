@@ -42,7 +42,7 @@ def generate_launch_description():
                     remappings=[
                         ('/ack_vel', '/logi/ack_vel'),
                     ],
-                    )  # TODO change other launch files to all have the same wheel max angle, add to main launch file
+                    )
 
     return LaunchDescription([
         # Launch Arguments
