@@ -42,8 +42,16 @@ void LogiG29Node::joy_callback(sensor_msgs::msg::Joy::SharedPtr msg) {
     auto raw_throttle = normalize_pedal(msg->axes[2]);
     auto raw_brake = normalize_pedal(msg->axes[3]);
 
+    // Cap steering at max angle
+    if (abs(steering2rad(raw_steering)) > this->max_steering_rad) {
+        raw_steering = this->max_steering_rad * std::copysignf(1, raw_steering);
+        RCLCPP_INFO(this->get_logger(), "Capping steering!");
+    } else {
+        raw_steering = steering2rad(raw_steering);
+    }
+
     // First build an ack command, emulating the steering ratio
-    auto raw_ack = AckermannCommand{0, this->steering_ratio(steering2rad(raw_steering))};
+    auto raw_ack = AckermannCommand{0, this->steering_ratio(raw_steering)};
 
     // Prioritise throttle over brake
     if (raw_brake > 0) {

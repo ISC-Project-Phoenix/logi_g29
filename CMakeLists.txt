@@ -46,6 +46,11 @@ ament_target_dependencies(
 install(TARGETS logi-g29
         DESTINATION lib/${PROJECT_NAME})
 
+install(
+        DIRECTORY launch
+        DESTINATION share/${PROJECT_NAME}/
+)
+
 if (BUILD_TESTING)
     #TODO add
     find_package(ament_lint_auto REQUIRED)
