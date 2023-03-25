@@ -42,7 +42,7 @@ def generate_launch_description():
                         'wheelbase': wheelbase
                     }],
                     remappings=[
-                        ('/ack_vel', '/logi/ack_vel'),
+                        ('/cmd_vel', '/logi/ack_vel'),
                     ],
                     )
 
