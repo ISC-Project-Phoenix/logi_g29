@@ -25,6 +25,9 @@ class LogiG29Node : public rclcpp::Node {
     /// Phoenix's steering ratio
     const ack::Ratio steering_ratio = ack::get_steering_ratio(ack::Project::Phoenix);
 
+    /// Force feedback fd. -1 if not available
+    int force_feedback_fd = -1;
+
 public:
     LogiG29Node(const rclcpp::NodeOptions& options);
 

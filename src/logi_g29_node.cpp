@@ -1,6 +1,11 @@
 #include "logi_g29/logi_g29_node.hpp"
 
+#include <fcntl.h>
+#include <unistd.h>
+
 #include <functional>
+
+#include "linux/input.h"
 
 using namespace std::placeholders;
 
@@ -14,6 +19,9 @@ LogiG29Node::LogiG29Node(const rclcpp::NodeOptions& options) : Node("logi_g29", 
     this->max_throttle_speed = this->declare_parameter<float>("max_throttle_speed", 10.0);
     this->max_steering_rad = this->declare_parameter<float>("max_steering_rad", 2.0);
     this->wheelbase = this->declare_parameter<float>("wheelbase", 1.8);
+
+    this->force_feedback_fd =
+        open("/dev/input/by-id/usb-Logitech_G29_Driving_Force_Racing_Wheel-event-joystick", O_RDWR);
 }
 
 /* Controller mapping:
@@ -37,6 +45,20 @@ float steering2rad(float raw) { return 7.853981634f * raw; }
 void LogiG29Node::joy_callback(sensor_msgs::msg::Joy::SharedPtr msg) {
     // Steering here is in percents of one lock in either direction, could use for FF percents
     auto raw_steering = msg->axes[0];
+
+    // Implement FF by just setting autocenter higher
+    if (this->force_feedback_fd != -1) {
+        auto level = std::clamp(abs(steering2rad(raw_steering)) / this->max_steering_rad, 0.2f, 1.0f);
+
+        struct input_event ie;
+        ie.type = EV_FF;
+        ie.code = FF_AUTOCENTER;
+        ie.value = 0xFFFFUL * level;
+
+        if (write(this->force_feedback_fd, &ie, sizeof(ie)) == -1) {
+            RCLCPP_ERROR(this->get_logger(), "Failed to write ff effect");
+        }
+    }
 
     auto raw_clutch = normalize_pedal(msg->axes[1]);
     auto raw_throttle = normalize_pedal(msg->axes[2]);
